@@ -8,17 +8,28 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 
-public class OdczytProwadzacy {
+import javax.swing.JOptionPane;
+
+public class Odczyt3 {
+	
+	static String kogoSzukac =  JOptionPane.showInputDialog("Podaj id stanowiska");
 
     public static void main(String[] args) {
    	 final String url = "jdbc:postgresql://localhost/hr";
    	 final String user = "hr";
    	 final String password = "abc123";
    	 
-   	 final String sql = "SELECT * FROM employees join jobs using(job_id)";
+   	 final String sql = "SELECT * FROM employees where job_id=";
+   	 
+   	StringBuilder sb = new StringBuilder();
+		 sb.append(sql);
+		 sb.append("'");
+		 sb.append(kogoSzukac);
+		 sb.append("'");
+		 String sbs = sb.toString();
    	 
    	 try(Connection c = DriverManager.getConnection(url, user, password);
-   		 PreparedStatement stmt = c.prepareStatement(sql)) {
+   		 PreparedStatement stmt = c.prepareStatement(sbs)) {
    		 
    		 try(ResultSet rs = stmt.executeQuery()) {
    			 while(rs.next()) {
@@ -29,11 +40,10 @@ public class OdczytProwadzacy {
    				 BigDecimal pensja = rs.getBigDecimal("salary");
    				 double prowizja = rs.getDouble("commission_pct");
    				 java.sql.Date data = rs.getDate("hire_date");
-   				 String praca = rs.getString("job_title");
    				 LocalDate dataNowa = data.toLocalDate();
    				 
-   				 System.out.printf("%3d %-15s %-15s %-10s %8s %.2f %s %-15s\n",
-   						 id, imie, nazwisko, job, pensja, prowizja, dataNowa, praca);
+   				 System.out.printf("%3d %-15s %-15s %-10s %8s %.2f %s s\n",
+   						 id, imie, nazwisko, job, pensja, prowizja, dataNowa);
    			 }
    		 }
    	 } catch (SQLException e) {
@@ -41,5 +51,3 @@ public class OdczytProwadzacy {
    	 }
     }
 }
-
-
